@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Erich Gagui — Portfolio</title>
+<meta name="description" content="Erich Gagui — backend and full-stack developer working across PHP, MySQL, Vue.js, Android, and Unity. BSIT student at University of Batangas – Lipa City." />
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Erich Gagui — Backend Enthusiast" />
+<meta property="og:description" content="Backend and full-stack developer working across PHP, MySQL, Vue.js, Android, and Unity." />
+<meta property="og:image" content="assets/portrait.png" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Erich Gagui — Backend Enthusiast" />
+<meta name="twitter:description" content="Backend and full-stack developer working across PHP, MySQL, Vue.js, Android, and Unity." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand"><span class="dot"></span>ERICH.SYS</div>
+      <nav id="primary-nav" :class="['nav-links', menuOpen ? 'open' : '']">
+        <a href="#about" @click="menuOpen=false">Index</a>
+        <a href="#projects" @click="menuOpen=false">Projects</a>
+        <a href="#gamedev" @click="menuOpen=false">Game Dev</a>
+        <a href="#stack" @click="menuOpen=false">Stack</a>
+        <a href="#log" @click="menuOpen=false">Log</a>
+        <a href="#contact" @click="menuOpen=false">Contact</a>
+      </nav>
+      <button class="nav-toggle" @click="menuOpen = !menuOpen" aria-label="Toggle menu" aria-controls="primary-nav" :aria-expanded="menuOpen">{{ menuOpen ? '×' : '≡' }}</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="id-card">
+        <div class="id-photo">
+          <img src="assets/portrait.png" alt="Portrait of Erich" />
+        </div>
+        <div class="id-meta">
+          <div class="row"><span class="k">Student ID</span><span class="v">2320274</span></div>
+          <div class="row"><span class="k">Year Level</span><span class="v">4th Year</span></div>
+          <div class="row"><span class="k">Program</span><span class="v">BSIT</span></div>
+          <div class="row"><span class="k">Institution</span><span class="v">UB Lipa</span></div>
+          <div class="row"><span class="k">Status</span><span class="v">Active</span></div>
+        </div>
+      </div>
+
+      <div class="hero-copy">
+        <div class="eyebrow">Backend Enthusiast / IT Student</div>
+        <h1 class="name">Erich Gagui</h1>
+        <p class="role-line">
+          An aspiring multi-platform developer working across <strong>web</strong>,
+          <strong>mobile</strong>, and <strong>desktop</strong> — from PHP,
+          MySQL, and Vue.js backends to native Android apps on Jetpack
+          Navigation and Java Swing desktop systems. Currently completing a
+          BSIT degree at the University of Batangas – Lipa City, with schema
+          design and structured documentation as constants across every
+          stack, and a parallel track in Unity game development on the side.
+        </p>
+        <div class="hero-actions">
+          <a href="#projects" class="btn">View Projects</a>
+          <a href="#contact" class="btn ghost">Get In Touch</a>
+        </div>
+        <div class="stat-strip">
+          <div class="stat"><div class="num">02</div><div class="lbl">Active Projects</div></div>
+          <div class="stat"><div class="num">09</div><div class="lbl">Tables Modeled</div></div>
+          <div class="stat"><div class="num">04</div><div class="lbl">Systems Shipped</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">01 / Describe</div>
+          <h2 class="section-title">About</h2>
+        </div>
+      </div>
+      <div class="describe-table reveal" ref="aboutTable">
+        <div class="describe-row">
+          <div class="field">Role</div>
+          <div class="value">Backend developer on capstone project teams, responsible for server logic, database schema, and data integrity.</div>
+        </div>
+        <div class="describe-row">
+          <div class="field">Program</div>
+          <div class="value">Bachelor of Science in Information Technology, 4th Year, University of Batangas – Lipa City</div>
+        </div>
+        <div class="describe-row">
+          <div class="field">Approach</div>
+          <div class="value">Prefers structured, reproducible work: seed files that clean up after themselves, version-controlled deliverables, and clear separation between logic and documentation.</div>
+        </div>
+        <div class="describe-row">
+          <div class="field">Interests</div>
+          <div class="value">
+            <span class="tag-chip" v-for="i in interests" :key="i">{{ i }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">02 / Build Log</div>
+          <h2 class="section-title">Projects</h2>
+        </div>
+      </div>
+
+      <div class="project-table reveal" v-for="p in projects" :key="p.name">
+        <div class="pt-head">
+          <div class="pt-head-left">
+            <div class="pt-logo" v-if="p.logo">
+              <img :src="p.logo" alt="Project logo" />
+            </div>
+            <div class="tname">TABLE: {{ p.name }}</div>
+          </div>
+          <div class="tstatus">{{ p.status }}</div>
+        </div>
+        <div class="pt-body">
+          <div class="pt-top">
+            <div class="pt-copy" :class="{ 'pt-copy-full': !p.logo }">
+              <div class="pt-title">{{ p.title }}</div>
+              <div class="pt-desc">{{ p.desc }}</div>
+            </div>
+            <div class="pt-logo-large" v-if="p.logo">
+              <img :src="p.logo" alt="Project logo" />
+            </div>
+          </div>
+          <div class="pt-cols">
+            <div class="pt-col">
+              <div class="ck">Stack</div>
+              <div class="cv"><span v-for="s in p.stack">{{ s }}<br></span></div>
+            </div>
+            <div class="pt-col">
+              <div class="ck">Role</div>
+              <div class="cv">{{ p.role }}</div>
+            </div>
+            <div class="pt-col">
+              <div class="ck">Notes</div>
+              <div class="cv">{{ p.notes }}</div>
+            </div>
+          </div>
+          <div class="pt-shots" v-if="p.screenshots && p.screenshots.length">
+            <button
+              v-for="(s, i) in p.screenshots" :key="s.src"
+              class="pt-shot"
+              :class="{ 'pt-shot-wide': s.wide }"
+              type="button"
+              :aria-label="'View screenshot: ' + s.caption"
+              @click="openLightbox(p.screenshots, i)">
+              <img :src="s.src" :alt="s.caption" loading="lazy" />
+            </button>
+          </div>
+          <div class="pt-live" v-if="p.link">
+            <span class="pt-live-label">Live Deployment</span>
+            <a :href="p.link" target="_blank" rel="noopener noreferrer" class="pt-live-link">
+              Visit Site <span class="arrow">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="gamedev">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">03 / Side Builds</div>
+          <h2 class="section-title">Game Dev</h2>
+        </div>
+      </div>
+      <div class="game-grid reveal">
+        <div class="game-card" v-for="g in gamedev" :key="g.title">
+          <div class="game-engine">{{ g.engine }}</div>
+          <div class="game-title">{{ g.title }}</div>
+          <div class="game-desc">{{ g.desc }}</div>
+          <div class="game-tags">
+            <span v-for="t in g.tags" :key="t">{{ t }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="stack">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">04 / Reference</div>
+          <h2 class="section-title">Stack</h2>
+        </div>
+      </div>
+      <div class="stack-grid reveal">
+        <div class="stack-cell" v-for="col in stack" :key="col.label">
+          <div class="sc-label">{{ col.label }}</div>
+          <div class="sc-items"><span v-for="i in col.items">{{ i }}</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="log">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">05 / History</div>
+          <h2 class="section-title">Migration Log</h2>
+        </div>
+      </div>
+      <div class="log reveal">
+        <div class="log-entry" :class="{head: e.head}" v-for="e in migrations" :key="e.ver">
+          <div class="log-ver"><span class="tag">{{ e.ver }}</span> — {{ e.date }}</div>
+          <div class="log-title">{{ e.title }}</div>
+          <div class="log-desc">{{ e.desc }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap contact-inner">
+      <div class="contact-big">Open to backend and full-stack roles, freelance work, and capstone collaboration.</div>
+      <div class="contact-list">
+        <a href="mailto:erichjeremiahpaula.gagui@gmail.com">erichjeremiahpaula.gagui@gmail.com</a>
+        <a href="https://github.com/erich-gagui18" target="_blank" rel="noopener">github.com/erich-gagui18</a>
+        <a href="https://www.linkedin.com/in/erich-gagui-97a36142a" target="_blank" rel="noopener">https://www.linkedin.com/in/erich-gagui-97a36142a</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wrap">
+    <span>© 2026 Erich. Built with Vue.</span>
+    <span>UB Lipa · BSIT 4th Year</span>
+  </footer>
+
+  <div
+    class="lightbox-overlay"
+    v-if="lightbox.open"
+    @click.self="closeLightbox">
+    <button class="lightbox-close" type="button" aria-label="Close image viewer" @click="closeLightbox">×</button>
+    <button
+      v-if="lightbox.images.length > 1"
+      class="lightbox-nav lightbox-prev"
+      type="button"
+      aria-label="Previous screenshot"
+      @click="prevImage">‹</button>
+    <figure class="lightbox-figure">
+      <img :src="lightbox.images[lightbox.index].src" :alt="lightbox.images[lightbox.index].caption" />
+      <figcaption v-if="lightbox.images[lightbox.index].caption">{{ lightbox.images[lightbox.index].caption }}</figcaption>
+    </figure>
+    <button
+      v-if="lightbox.images.length > 1"
+      class="lightbox-nav lightbox-next"
+      type="button"
+      aria-label="Next screenshot"
+      @click="nextImage">›</button>
+    <div class="lightbox-count" v-if="lightbox.images.length > 1">{{ lightbox.index + 1 }} / {{ lightbox.images.length }}</div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.21/vue.global.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
