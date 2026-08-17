@@ -93,8 +93,8 @@ createApp({
         {label:'Game Dev', items:['Unity (2D & 3D)','C#','URP','New Input System']},
         {label:'Mobile Dev', items:['Android (Java / Kotlin)','Jetpack Navigation Component']},
         {label:'Desktop Dev', items:['Java','Java Swing','Maven','NetBeans']},
-        {label:'Tooling', items:['XAMPP','VS Code','Git / GitHub']},
-        {label:'Deployment', items:['Render','InfinityFree','Static / Shared Hosting']}
+        {label:'Tooling', items:['XAMPP','VS Code','Git / GitHub','Node.js']},
+        {label:'Deployment', items:['Firebase Hosting','Render','InfinityFree','Static / Shared Hosting']}
       ],
       migrations:[
         {ver:'v001', date:'Built', title:'electbudz_voting_system', desc:'Java Swing desktop voting app on Maven/NetBeans, with MySQL-backed voter authentication, duplicate-vote checks, and gender-themed profile screens.'},
