@@ -4,6 +4,19 @@ createApp({
   data(){
     return {
       menuOpen:false,
+      booting:true,
+      bootDone:false,
+      bootLines:[
+        'INITIALIZING KERNEL...',
+        'MOUNTING /dev/erich...',
+        "CONNECTING TO DATABASE 'erich_dev'...",
+        'LOADING SCHEMA: projects, stack, migrations...',
+        'COMPILING RECORDS... 9 ENTRIES FOUND',
+        'RENDERING INTERFACE...',
+        'SYSTEM READY'
+      ],
+      visibleBootLines:[],
+      bootProgress:0,
       lightbox:{ open:false, images:[], index:0 },
       projects:[
         {
@@ -131,9 +144,27 @@ createApp({
       if(e.key === 'Escape') this.closeLightbox();
       if(e.key === 'ArrowRight' && this.lightbox.images.length > 1) this.nextImage();
       if(e.key === 'ArrowLeft' && this.lightbox.images.length > 1) this.prevImage();
+    },
+    runBootSequence(){
+      document.body.classList.add('boot-lock');
+      const stepDelay = 220;
+      const total = this.bootLines.length;
+      this.bootLines.forEach((line, i)=>{
+        setTimeout(()=>{
+          this.visibleBootLines.push(line);
+          this.bootProgress = Math.round(((i+1)/total)*100);
+        }, i*stepDelay);
+      });
+      const finishDelay = total*stepDelay + 500;
+      setTimeout(()=>{
+        this.booting = false;
+        document.body.classList.remove('boot-lock');
+        setTimeout(()=>{ this.bootDone = true; }, 700);
+      }, finishDelay);
     }
   },
   mounted(){
+    this.runBootSequence();
     window.addEventListener('keydown', this.onLightboxKeydown);
     const els = document.querySelectorAll('.reveal');
     const obs = new IntersectionObserver((entries)=>{

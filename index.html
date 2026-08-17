@@ -25,6 +25,23 @@
 <body>
 <div id="app">
 
+  <div class="boot-loader" v-if="!bootDone" :class="{ 'boot-exit': !booting }" aria-hidden="true">
+    <div class="boot-grid"></div>
+    <div class="boot-scanlines"></div>
+    <div class="boot-content">
+      <div class="boot-tag">ERICH.SYS — BOOT SEQUENCE</div>
+      <div class="boot-lines">
+        <div class="boot-line" v-for="(line, i) in visibleBootLines" :key="i">
+          <span class="boot-prompt">&gt;</span>{{ line }}<span class="boot-cursor" v-if="i === visibleBootLines.length - 1"></span>
+        </div>
+      </div>
+      <div class="boot-bar-track">
+        <div class="boot-bar-fill" :style="{ width: bootProgress + '%' }"></div>
+      </div>
+      <div class="boot-percent">{{ String(bootProgress).padStart(3,'0') }}%</div>
+    </div>
+  </div>
+
   <header class="nav">
     <div class="nav-inner">
       <div class="brand"><span class="dot"></span>ERICH.SYS</div>
