@@ -24,7 +24,7 @@ createApp({
           link:'https://kusineronglokal.site.je/lokalkusinero/public_html/home.php',
           desc:'A Filipino recipe and pantry management web app built on a PHP MVC architecture, designed around a nine-table schema spanning five feature tabs with a canonical 30-recipe seed set.',
           stack:['PHP (MVC)','Vanilla JavaScript','MySQL / MyISAM'],
-          role:'Full-stack Developer',
+          role:'Backend Developer',
           notes:'MyISAM with no FK enforcement by design — integrity is handled in application logic instead, which keeps seed re-runs fast during active development. Seed files delete across the full prior-data range to prevent duplicate-entry errors. Shipped as versioned zips with a running CHANGELOG.md.'
         },
         {
@@ -60,7 +60,10 @@ createApp({
           status:'Built',
           logo:'assets/logos/electbudz-logo.png',
           screenshots:[
-            {src:'assets/screenshots/electbudz/login.jpg', caption:'Login screen — voter sign-in with admin panel access', wide:true}
+            {src:'assets/screenshots/electbudz/login.jpg', caption:'Login screen — voter sign-in with admin panel access', wide:true},
+            {src:'assets/screenshots/electbudz/admin-panel.png', caption:'Admin panel — manage candidates, set voter count, start election', wide:true},
+            {src:'assets/screenshots/electbudz/voting.png', caption:'Ballot screen — voter selects candidates per position', wide:true},
+            {src:'assets/screenshots/electbudz/results.png', caption:'Election results — live vote tally and percentage breakdown per position', wide:true}
           ],
           desc:'A Java Swing desktop voting application connecting to a MySQL voters database, with authenticated login, duplicate-vote prevention, and a gender-aware voter profile screen.',
           stack:['Java Swing','Maven / NetBeans','MySQL (JDBC)'],
