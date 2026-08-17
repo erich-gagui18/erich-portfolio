@@ -37,6 +37,7 @@ a:focus-visible, button:focus-visible{outline:2px solid var(--black); outline-of
 header.nav{
   position:fixed; top:0; left:0; right:0; z-index:50;
   background:rgba(255,255,255,0.86);
+  -webkit-backdrop-filter:blur(10px);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line-soft);
 }
@@ -254,7 +255,7 @@ h2.section-title{
 /* ===== PROJECT SCREENSHOTS ===== */
 .pt-shots{
   display:flex; gap:1px; background:var(--line-soft);
-  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  overflow-x:auto;
   border-top:1px solid var(--line-soft); margin-top:22px;
 }
 .pt-shot{
