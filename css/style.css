@@ -208,7 +208,7 @@ h2.section-title{
 .pt-copy.pt-copy-full{grid-column:1 / -1;}
 .pt-logo-large{
   grid-column:3; justify-self:center;
-  width:112px; height:112px; flex-shrink:0; border-radius:50%; overflow:hidden;
+  width:175px; height:175px; flex-shrink:0; border-radius:50%; overflow:hidden;
   border:1px solid var(--black); background:var(--white);
 }
 .pt-logo-large img{
