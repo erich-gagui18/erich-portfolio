@@ -13,70 +13,91 @@
 <meta property="og:description" content="A voice-and-text RAG assistant trained on Erich Gagui's projects, stack, and background." />
 <meta property="og:image" content="assets/portrait.png" />
 
-<!-- Preconnects and the Google Fonts stylesheet must come before any other
-     stylesheet reference, but note there is no @import rule here at all —
-     using <link> avoids the "@import must be first" pitfall entirely. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- Shares the exact same stylesheet as the rest of the site, so nav,
-     colors, and type stay in sync automatically instead of duplicating them. -->
+<!-- Shares the site's exact stylesheet and design tokens, so nav, colors, and
+     type stay identical to the rest of the portfolio. -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
   /* Page-specific rules only — everything shared lives in css/style.css */
-  .agent-hero{ padding:150px 0 60px; text-align:center; }
+  .agent-hero{ padding:150px 0 40px; text-align:center; }
   .agent-hero .eyebrow{
     font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
     color:var(--gray-600); margin:0 0 18px; display:flex; align-items:center; gap:10px;
     justify-content:center;
+  }
+  .agent-hero .eyebrow::before{
+    content:''; width:22px; height:1px; background:var(--gray-600);
   }
   .agent-hero h1{
     font-family:var(--display); font-weight:700; font-size:clamp(32px,6vw,52px);
     letter-spacing:-0.02em; margin:0 auto 16px; max-width:640px;
   }
   .agent-hero p.sub{
-    font-size:16px; color:var(--gray-900); max-width:560px; margin:0 auto 40px; line-height:1.7;
+    font-family:var(--body); font-size:16px; color:var(--gray-900); max-width:560px;
+    margin:0 auto 36px; line-height:1.7;
   }
 
-  .chip-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:36px; }
+  .chip-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:40px; }
   .chip{
     font-family:var(--mono); font-size:11.5px; letter-spacing:0.02em;
-    border:1px solid var(--line-soft); padding:7px 12px; border-radius:999px; color:var(--gray-900);
+    border:1px solid var(--line-soft); padding:8px 14px; border-radius:999px; color:var(--gray-900);
+    background:var(--white); transition:border-color .15s ease, background .15s ease;
   }
+  .chip:hover{ border-color:var(--black); background:var(--gray-100); }
+
+  .chat-column{ max-width:600px; margin:0 auto; padding:0 24px 100px; }
 
   .widget-frame{
-    border:1px solid var(--black); border-radius:14px; padding:32px 28px;
-    width:100%; max-width:480px; margin:0 auto; background:var(--gray-100);
-    display:flex; flex-direction:column; align-items:center; gap:16px;
+    border:1px solid var(--black); border-radius:4px;
+    padding:0; width:100%; background:var(--white);
   }
-  .widget-frame .label{
-    font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+  .widget-frame-head{
+    display:flex; align-items:center; gap:10px;
+    padding:16px 20px; border-bottom:1px solid var(--line-soft);
+  }
+  .widget-frame-head .avatar-ring{
+    width:34px; height:34px; border-radius:50%; overflow:hidden; flex-shrink:0;
+    border:1px solid var(--black);
+  }
+  .widget-frame-head .avatar-ring img{ width:100%; height:100%; object-fit:cover; filter:grayscale(100%); }
+  .widget-frame-head .label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
     color:var(--gray-600);
   }
-  /* Equivalent of: transition-[border-radius] flex flex-col p-2 rounded-sheet
-     bg-base shadow-md pointer-events-auto overflow-hidden cursor-pointer */
-  .chat-shell{
-    transition:border-radius .25s ease;
-    display:flex;
-    flex-direction:column;
-    padding:8px;
-    border-radius:16px;
-    background:var(--white);
-    box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.10);
-    pointer-events:auto;
-    overflow:hidden;
-    cursor:pointer;
-  }
-  .widget-fallback{
-    font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center; max-width:340px;
+  .widget-frame-head .label strong{
+    display:block; font-family:var(--body); font-size:13.5px; font-weight:600;
+    color:var(--black); text-transform:none; letter-spacing:0; margin-top:2px;
   }
 
-  .back-row{ margin-top:44px; text-align:center; }
+  .widget-body{ padding:20px; }
+
+  /* ===== Pull the ElevenLabs widget out of its default fixed floating
+     position and make it flow inline inside .widget-body. The widget script
+     applies position:fixed on the host element itself (light DOM), so this
+     needs !important to win over that. ===== */
+  .widget-body elevenlabs-convai{
+    position:static !important;
+    inset:auto !important;
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:0 !important;
+    --elevenlabs-convai-widget-width:100%;
+    --elevenlabs-convai-widget-height:520px;
+  }
+
+  .widget-fallback{
+    font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center; padding:20px;
+  }
+
+  .back-row{ margin-top:36px; text-align:center; }
 
   @media (max-width:600px){
-    .agent-hero{ padding:130px 0 40px; }
+    .agent-hero{ padding:130px 0 30px; }
   }
 </style>
 </head>
@@ -94,9 +115,9 @@
       <div class="eyebrow">AI Assistant Module — Week 3</div>
       <h1>Ask about my portfolio</h1>
       <p class="sub">
-        ASK.ERICH is a voice-and-text assistant built with ElevenLabs and grounded
-        in a fixed knowledge base of my projects, stack, and background. It won't
-        invent an answer — if something's outside what it knows, it'll say so.
+        ASK.ERICH is a voice-and-text assistant grounded in a fixed knowledge base
+        of my projects, stack, and background. It won't invent an answer — if
+        something's outside what it knows, it'll say so.
       </p>
 
       <div class="chip-row" aria-hidden="true">
@@ -104,24 +125,38 @@
         <span class="chip">"What stack does LokalKusinero use?"</span>
         <span class="chip">"What is ElectBudz?"</span>
       </div>
-
-      <div class="widget-frame">
-        <span class="label">Talk to ASK.ERICH</span>
-        <div class="chat-shell">
-          <elevenlabs-convai agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"></elevenlabs-convai>
-        </div>
-        <noscript>
-          <p class="widget-fallback">This assistant needs JavaScript enabled to load.</p>
-        </noscript>
-      </div>
     </section>
 
-    <div class="back-row wrap">
-      <a href="index.html" class="btn ghost">&larr; Back to Portfolio</a>
+    <div class="chat-column">
+      <div class="widget-frame">
+        <div class="widget-frame-head">
+          <span class="avatar-ring"><img src="assets/portrait.png" alt="" /></span>
+          <span class="label">TABLE: ask_erich_session
+            <strong>ASK.ERICH — Portfolio Assistant</strong>
+          </span>
+        </div>
+        <div class="widget-body">
+          <elevenlabs-convai
+            agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"
+            variant="expanded"
+            avatar-image-url="assets/portrait.png"
+            action-text="Ask about my work"
+            start-call-text="Start chatting"
+            end-call-text="End chat">
+          </elevenlabs-convai>
+          <noscript>
+            <p class="widget-fallback">This assistant needs JavaScript enabled to load.</p>
+          </noscript>
+        </div>
+      </div>
+
+      <div class="back-row">
+        <a href="index.html" class="btn ghost">&larr; Back to Portfolio</a>
+      </div>
     </div>
   </main>
 
-  <footer class="wrap" style="margin-top:70px;">
+  <footer class="wrap">
     <span>&copy; 2026 Erich Gagui. AI Assistant Module — IPT102 Week 3.</span>
     <span>Built with ElevenLabs Conversational AI</span>
   </footer>
