@@ -46,7 +46,7 @@
     <div class="nav-inner">
       <div class="brand"><span class="dot"></span>ERICH.SYS</div>
       <nav id="primary-nav" :class="['nav-links', menuOpen ? 'open' : '']">
-        <a href="#about" @click="menuOpen=false">Index</a>
+        <a href="#about" @click="menuOpen=false">About</a>
         <a href="#projects" @click="menuOpen=false">Projects</a>
         <a href="#gamedev" @click="menuOpen=false">Game Dev</a>
         <a href="#stack" @click="menuOpen=false">Stack</a>
@@ -241,11 +241,46 @@
     </div>
   </section>
 
+  <section class="section" id="cv">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">05 / Export</div>
+          <h2 class="section-title">Curriculum Vitae</h2>
+        </div>
+      </div>
+      <div class="cv-panel reveal">
+        <div class="cv-copy">
+          <p>One-page PDF summary of education, skills, and project history — kept in sync with what's on this page.</p>
+        </div>
+        <a href="assets/Erich_Gagui_CV.pdf" download class="btn cv-download">Download CV (PDF) ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="log">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">06 / History</div>
+          <h2 class="section-title">Migration Log</h2>
+        </div>
+      </div>
+      <div class="log reveal">
+        <div class="log-entry" :class="{head: e.head}" v-for="e in migrations" :key="e.ver">
+          <div class="log-ver"><span class="tag">{{ e.ver }}</span> — {{ e.date }}</div>
+          <div class="log-title">{{ e.title }}</div>
+          <div class="log-desc">{{ e.desc }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="askerich">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="section-tag">05 / Live Agent</div>
+          <div class="section-tag">07 / Live Agent</div>
           <h2 class="section-title">ASK.ERICH</h2>
         </div>
       </div>
@@ -272,41 +307,6 @@
           <p>Ask it about any project on this page, my stack, or how I approach a problem — in text or by voice.</p>
         </div>
         <a href="ask.erich.html" class="btn cv-download">Launch ASK.ERICH ↗</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="cv">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="section-tag">06 / Export</div>
-          <h2 class="section-title">Curriculum Vitae</h2>
-        </div>
-      </div>
-      <div class="cv-panel reveal">
-        <div class="cv-copy">
-          <p>One-page PDF summary of education, skills, and project history — kept in sync with what's on this page.</p>
-        </div>
-        <a href="assets/Erich_Gagui_CV.pdf" download class="btn cv-download">Download CV (PDF) ↓</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="log">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <div class="section-tag">07 / History</div>
-          <h2 class="section-title">Migration Log</h2>
-        </div>
-      </div>
-      <div class="log reveal">
-        <div class="log-entry" :class="{head: e.head}" v-for="e in migrations" :key="e.ver">
-          <div class="log-ver"><span class="tag">{{ e.ver }}</span> — {{ e.date }}</div>
-          <div class="log-title">{{ e.title }}</div>
-          <div class="log-desc">{{ e.desc }}</div>
-        </div>
       </div>
     </div>
   </section>
