@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ASK.ERICH — Portfolio RAGbot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a; --white:#ffffff; --line-soft:#e2e2e2;
+    --gray-600:#6f6f6f; --gray-100:#f2f2f0;
+    --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--white); color:var(--black); font-family:var(--body);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    padding:60px 20px;
+  }
+  .tag{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--gray-600); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .tag::before{content:''; width:22px; height:1px; background:var(--gray-600);}
+  h1{
+    font-family:var(--display); font-weight:700; font-size:clamp(32px,6vw,52px);
+    letter-spacing:-0.02em; margin-bottom:16px; text-align:center;
+  }
+  p.sub{
+    font-size:16px; color:#444; max-width:520px; text-align:center; margin-bottom:40px; line-height:1.6;
+  }
+  .widget-frame{
+    border:1px solid var(--black); border-radius:14px; padding:28px;
+    width:100%; max-width:480px; background:var(--gray-100);
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .widget-frame .label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--gray-600);
+  }
+  footer{
+    margin-top:50px; font-family:var(--mono); font-size:11px; color:var(--gray-600); text-align:center;
+  }
+  footer a{color:var(--black);}
+</style>
+</head>
+<body>
+
+  <div class="tag">ERICH.SYS — AI Assistant Module</div>
+  <h1>Ask about my portfolio</h1>
+  <p class="sub">
+    ASK.ERICH is a voice-and-text assistant trained on my projects,
+    stack, and background. Try asking about LokalKusinero, ElectBudz,
+    my capstone, or my tech stack — it answers from a fixed knowledge
+    base, so it'll also tell you honestly when something's outside it.
+  </p>
+
+  <div class="widget-frame">
+    <span class="label">Talk to ASK.ERICH</span>
+
+    <!--
+      Replace YOUR_AGENT_ID_HERE below with the Agent ID from your
+      ElevenLabs dashboard (Agent → Settings → Agent ID), after you've
+      published the agent.
+    -->
+    <elevenlabs-convai agent-id="YOUR_AGENT_ID_HERE"></elevenlabs-convai>
+  </div>
+
+  <footer>
+    Built by Erich Gagui · <a href="https://github.com/erich-gagui18" target="_blank" rel="noopener">github.com/erich-gagui18</a>
+  </footer>
+
+  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+</body>
+</html>
