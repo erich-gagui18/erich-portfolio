@@ -55,6 +55,20 @@
     font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
     color:var(--gray-600);
   }
+  /* Equivalent of: transition-[border-radius] flex flex-col p-2 rounded-sheet
+     bg-base shadow-md pointer-events-auto overflow-hidden cursor-pointer */
+  .chat-shell{
+    transition:border-radius .25s ease;
+    display:flex;
+    flex-direction:column;
+    padding:8px;
+    border-radius:16px;
+    background:var(--white);
+    box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -2px rgba(0,0,0,0.10);
+    pointer-events:auto;
+    overflow:hidden;
+    cursor:pointer;
+  }
   .widget-fallback{
     font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center; max-width:340px;
   }
@@ -93,7 +107,9 @@
 
       <div class="widget-frame">
         <span class="label">Talk to ASK.ERICH</span>
-        <elevenlabs-convai agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"></elevenlabs-convai>
+        <div class="chat-shell">
+          <elevenlabs-convai agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"></elevenlabs-convai>
+        </div>
         <noscript>
           <p class="widget-fallback">This assistant needs JavaScript enabled to load.</p>
         </noscript>
