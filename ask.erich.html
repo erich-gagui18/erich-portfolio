@@ -4,34 +4,29 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ask Erich — AI Portfolio Assistant</title>
-<meta name="description" content="ASK.ERICH — a voice-and-text RAG assistant trained on Erich Gagui's projects, stack, and background." />
+<meta name="description" content="ASK.ERICH — a custom voice-and-text chat interface built on ElevenLabs Conversational AI, grounded in Erich Gagui's projects, stack, and background." />
 
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Ask Erich — AI Portfolio Assistant" />
-<meta property="og:description" content="A voice-and-text RAG assistant trained on Erich Gagui's projects, stack, and background." />
+<meta property="og:description" content="A custom chat interface grounded in Erich Gagui's projects, stack, and background." />
 <meta property="og:image" content="assets/portrait.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-<!-- Shares the site's exact stylesheet and design tokens, so nav, colors, and
-     type stay identical to the rest of the portfolio. -->
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-  /* Page-specific rules only — everything shared lives in css/style.css */
   .agent-hero{ padding:150px 0 40px; text-align:center; }
   .agent-hero .eyebrow{
     font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
     color:var(--gray-600); margin:0 0 18px; display:flex; align-items:center; gap:10px;
     justify-content:center;
   }
-  .agent-hero .eyebrow::before{
-    content:''; width:22px; height:1px; background:var(--gray-600);
-  }
+  .agent-hero .eyebrow::before{ content:''; width:22px; height:1px; background:var(--gray-600); }
   .agent-hero h1{
     font-family:var(--display); font-weight:700; font-size:clamp(32px,6vw,52px);
     letter-spacing:-0.02em; margin:0 auto 16px; max-width:640px;
@@ -45,59 +40,133 @@
   .chip{
     font-family:var(--mono); font-size:11.5px; letter-spacing:0.02em;
     border:1px solid var(--line-soft); padding:8px 14px; border-radius:999px; color:var(--gray-900);
-    background:var(--white); transition:border-color .15s ease, background .15s ease;
+    background:var(--white); cursor:pointer; transition:border-color .15s ease, background .15s ease;
   }
   .chip:hover{ border-color:var(--black); background:var(--gray-100); }
+  .chip:disabled{ opacity:0.4; cursor:not-allowed; }
 
-  .chat-column{ max-width:600px; margin:0 auto; padding:0 24px 100px; }
+  .chat-column{ max-width:640px; margin:0 auto; padding:0 24px 100px; }
 
-  .widget-frame{
-    border:1px solid var(--black); border-radius:4px;
-    padding:0; width:100%; background:var(--white);
+  /* ===== Chat card ===== */
+  .chat-card{ border:1px solid var(--black); border-radius:4px; background:var(--white); }
+
+  .chat-head{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:16px 20px; border-bottom:1px solid var(--line-soft); flex-wrap:wrap;
   }
-  .widget-frame-head{
-    display:flex; align-items:center; gap:10px;
-    padding:16px 20px; border-bottom:1px solid var(--line-soft);
-  }
-  .widget-frame-head .avatar-ring{
+  .chat-head-id{ display:flex; align-items:center; gap:10px; }
+  .avatar-ring{
     width:34px; height:34px; border-radius:50%; overflow:hidden; flex-shrink:0;
     border:1px solid var(--black);
   }
-  .widget-frame-head .avatar-ring img{ width:100%; height:100%; object-fit:cover; filter:grayscale(100%); }
-  .widget-frame-head .label{
-    font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--gray-600);
-  }
-  .widget-frame-head .label strong{
+  .avatar-ring img{ width:100%; height:100%; object-fit:cover; filter:grayscale(100%); }
+  .chat-head-label{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--gray-600); }
+  .chat-head-label strong{
     display:block; font-family:var(--body); font-size:13.5px; font-weight:600;
     color:var(--black); text-transform:none; letter-spacing:0; margin-top:2px;
   }
 
-  .widget-body{ padding:20px; }
+  .status-pill{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:5px 10px; border-radius:999px; border:1px solid var(--line-soft); color:var(--gray-600);
+    display:flex; align-items:center; gap:6px; white-space:nowrap;
+  }
+  .status-pill .dot{ width:6px; height:6px; border-radius:50%; background:var(--gray-300); }
+  .status-pill[data-state="connected"] .dot,
+  .status-pill[data-state="listening"] .dot{ background:#1e6b3c; }
+  .status-pill[data-state="connected"],
+  .status-pill[data-state="listening"]{ border-color:#1e6b3c; color:#1e6b3c; }
+  .status-pill[data-state="connecting"] .dot{ background:#b58a00; animation:blink 1s ease-in-out infinite; }
+  .status-pill[data-state="connecting"]{ border-color:#b58a00; color:#b58a00; }
+  .status-pill[data-state="speaking"] .dot{ background:var(--black); animation:blink 0.8s ease-in-out infinite; }
+  .status-pill[data-state="speaking"]{ border-color:var(--black); color:var(--black); }
+  .status-pill[data-state="error"] .dot{ background:#b3261e; }
+  .status-pill[data-state="error"]{ border-color:#b3261e; color:#b3261e; }
+  @keyframes blink{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
 
-  /* ===== Pull the ElevenLabs widget out of its default fixed floating
-     position and make it flow inline inside .widget-body. The widget script
-     applies position:fixed on the host element itself (light DOM), so this
-     needs !important to win over that. ===== */
-  .widget-body elevenlabs-convai{
-    position:static !important;
-    inset:auto !important;
-    display:block !important;
-    width:100% !important;
-    max-width:100% !important;
-    margin:0 !important;
-    --elevenlabs-convai-widget-width:100%;
-    --elevenlabs-convai-widget-height:520px;
+  /* ===== Mode tabs ===== */
+  .mode-tabs{ display:flex; border-bottom:1px solid var(--line-soft); }
+  .mode-tab{
+    flex:1; text-align:center; padding:11px; font-family:var(--mono); font-size:11.5px;
+    letter-spacing:0.05em; text-transform:uppercase; color:var(--gray-600);
+    background:var(--white); border:none; border-right:1px solid var(--line-soft);
+    cursor:pointer; transition:background .15s ease, color .15s ease;
+  }
+  .mode-tab:last-child{ border-right:none; }
+  .mode-tab[aria-selected="true"]{ background:var(--black); color:var(--white); }
+  .mode-tab:disabled{ cursor:not-allowed; opacity:0.5; }
+
+  /* ===== Message thread ===== */
+  .thread{
+    padding:20px; min-height:220px; max-height:420px; overflow-y:auto;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .thread-empty{
+    font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center;
+    padding:40px 10px;
+  }
+  .msg-row{ display:flex; gap:10px; align-items:flex-start; }
+  .msg-row.user{ flex-direction:row-reverse; }
+  .msg-avatar{
+    width:26px; height:26px; border-radius:50%; overflow:hidden; flex-shrink:0;
+    border:1px solid var(--line-soft); margin-top:2px;
+  }
+  .msg-avatar img{ width:100%; height:100%; object-fit:cover; filter:grayscale(100%); }
+  .msg-avatar.user-avatar{
+    background:var(--black); display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:10px; color:var(--white); border-color:var(--black);
+  }
+  .msg-bubble{
+    max-width:78%; font-family:var(--body); font-size:14px; line-height:1.55;
+    padding:10px 14px; border-radius:3px;
+  }
+  .msg-row.agent .msg-bubble{ background:var(--gray-100); color:var(--black); }
+  .msg-row.user .msg-bubble{ background:var(--black); color:var(--white); }
+  .msg-row.system .msg-bubble{
+    background:transparent; border:1px dashed var(--line-soft); color:var(--gray-600);
+    font-family:var(--mono); font-size:11.5px; max-width:100%; text-align:center; margin:0 auto;
   }
 
-  .widget-fallback{
-    font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center; padding:20px;
+  /* ===== Composer ===== */
+  .composer{ border-top:1px solid var(--line-soft); padding:14px 16px; }
+  .composer-row{ display:flex; gap:10px; align-items:center; }
+  .composer-input{
+    flex:1; font-family:var(--body); font-size:14px; padding:11px 14px;
+    border:1px solid var(--line-soft); border-radius:3px; background:var(--white); color:var(--black);
+  }
+  .composer-input:focus{ outline:none; border-color:var(--black); }
+  .composer-input:disabled{ background:var(--gray-100); color:var(--gray-600); }
+  .composer-btn{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:11px 16px; border:1px solid var(--black); background:var(--black); color:var(--white);
+    border-radius:3px; cursor:pointer; white-space:nowrap; transition:opacity .15s ease;
+  }
+  .composer-btn:hover{ opacity:0.8; }
+  .composer-btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .composer-btn.ghost{ background:var(--white); color:var(--black); }
+
+  .session-row{
+    display:flex; justify-content:center; padding:16px; border-top:1px solid var(--line-soft);
+  }
+  .mic-btn{
+    display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:12px;
+    letter-spacing:0.04em; text-transform:uppercase; padding:12px 20px;
+    border:1px solid var(--black); border-radius:999px; background:var(--white); color:var(--black);
+    cursor:pointer;
+  }
+  .mic-btn[data-active="true"]{ background:var(--black); color:var(--white); }
+  .mic-btn .mic-dot{ width:8px; height:8px; border-radius:50%; background:currentColor; }
+  .mic-btn[data-active="true"] .mic-dot{ animation:blink 0.9s ease-in-out infinite; }
+
+  .error-note{
+    font-family:var(--mono); font-size:11.5px; color:#b3261e; padding:10px 20px 0;
   }
 
   .back-row{ margin-top:36px; text-align:center; }
 
   @media (max-width:600px){
     .agent-hero{ padding:130px 0 30px; }
+    .msg-bubble{ max-width:88%; }
   }
 </style>
 </head>
@@ -115,39 +184,59 @@
       <div class="eyebrow">AI Assistant Module — Week 3</div>
       <h1>Ask about my portfolio</h1>
       <p class="sub">
-        ASK.ERICH is a voice-and-text assistant grounded in a fixed knowledge base
-        of my projects, stack, and background. It won't invent an answer — if
-        something's outside what it knows, it'll say so.
+        ASK.ERICH is a custom-built chat interface on top of ElevenLabs Conversational AI,
+        grounded in a fixed knowledge base of my projects, stack, and background. It won't
+        invent an answer — if something's outside what it knows, it'll say so.
       </p>
 
-      <div class="chip-row" aria-hidden="true">
-        <span class="chip">"What's your capstone project?"</span>
-        <span class="chip">"What stack does LokalKusinero use?"</span>
-        <span class="chip">"What is ElectBudz?"</span>
+      <div class="chip-row" id="chipRow">
+        <button type="button" class="chip" data-prompt="What's your capstone project?">"What's your capstone project?"</button>
+        <button type="button" class="chip" data-prompt="What stack does LokalKusinero use?">"What stack does LokalKusinero use?"</button>
+        <button type="button" class="chip" data-prompt="What is ElectBudz?">"What is ElectBudz?"</button>
       </div>
     </section>
 
     <div class="chat-column">
-      <div class="widget-frame">
-        <div class="widget-frame-head">
-          <span class="avatar-ring"><img src="assets/portrait.png" alt="" /></span>
-          <span class="label">TABLE: ask_erich_session
-            <strong>ASK.ERICH — Portfolio Assistant</strong>
+      <div class="chat-card">
+
+        <div class="chat-head">
+          <div class="chat-head-id">
+            <span class="avatar-ring"><img src="assets/portrait.png" alt="" /></span>
+            <span class="chat-head-label">TABLE: ask_erich_session
+              <strong>ASK.ERICH — Portfolio Assistant</strong>
+            </span>
+          </div>
+          <span class="status-pill" id="statusPill" data-state="idle">
+            <span class="dot"></span>
+            <span id="statusText">Idle</span>
           </span>
         </div>
-        <div class="widget-body">
-          <elevenlabs-convai
-            agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"
-            variant="expanded"
-            avatar-image-url="assets/portrait.png"
-            action-text="Ask about my work"
-            start-call-text="Start chatting"
-            end-call-text="End chat">
-          </elevenlabs-convai>
-          <noscript>
-            <p class="widget-fallback">This assistant needs JavaScript enabled to load.</p>
-          </noscript>
+
+        <div class="mode-tabs" role="tablist" aria-label="Conversation mode">
+          <button type="button" class="mode-tab" id="tabText" role="tab" aria-selected="true">Text Chat</button>
+          <button type="button" class="mode-tab" id="tabVoice" role="tab" aria-selected="false">Voice Call</button>
         </div>
+
+        <div class="thread" id="thread">
+          <div class="thread-empty" id="threadEmpty">Start a session below to begin.</div>
+        </div>
+
+        <p class="error-note" id="errorNote" hidden></p>
+
+        <!-- Text mode composer -->
+        <div class="composer" id="textComposer">
+          <div class="composer-row">
+            <input type="text" id="chatInput" class="composer-input" placeholder="Start a session to begin typing…" disabled autocomplete="off" />
+            <button type="button" id="sendBtn" class="composer-btn" disabled>Send</button>
+          </div>
+        </div>
+
+        <!-- Session controls -->
+        <div class="session-row">
+          <button type="button" id="startBtn" class="composer-btn">Start Text Session</button>
+          <button type="button" id="endBtn" class="composer-btn ghost" hidden>End Session</button>
+        </div>
+
       </div>
 
       <div class="back-row">
@@ -158,9 +247,9 @@
 
   <footer class="wrap">
     <span>&copy; 2026 Erich Gagui. AI Assistant Module — IPT102 Week 3.</span>
-    <span>Built with ElevenLabs Conversational AI</span>
+    <span>Custom UI on ElevenLabs Conversational AI</span>
   </footer>
 
-  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+  <script type="module" src="js/chat.js"></script>
 </body>
 </html>
