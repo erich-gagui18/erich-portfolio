@@ -25,6 +25,8 @@ const chipRow = document.getElementById("chipRow");
 let mode = "text"; // 'text' | 'voice'
 let conversation = null;
 let sessionActive = false;
+let connecting = false; // guards against a second startSession() firing before onConnect resolves
+let awaitingReply = false; // text mode: true from send until the agent's next reply arrives
 let recentSentTexts = []; // de-dupe: texts we already rendered locally
 let lastAgentAvatarEl = null; // the most recent agent avatar — animated while speaking (voice mode)
 
@@ -139,6 +141,48 @@ function appendSystemNote(text) {
   thread.scrollTop = thread.scrollHeight;
 }
 
+/* Typing indicator — shown in text mode between sending a message and the
+   agent's reply arriving, so network latency doesn't read as broken. */
+let typingRow = null;
+
+function showTypingIndicator() {
+  if (mode !== "text" || typingRow) return;
+  typingRow = document.createElement("div");
+  typingRow.className = "msg-row agent";
+  typingRow.innerHTML = `
+    <div class="msg-bubble-stack">
+      <div class="msg-bubble msg-bubble-typing">
+        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+      </div>
+    </div>`;
+  thread.appendChild(typingRow);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function hideTypingIndicator() {
+  if (typingRow) {
+    typingRow.remove();
+    typingRow = null;
+  }
+}
+
+/* ElevenLabs voice models support inline direction tags like [friendly],
+   [excited], [laughs] — meant to steer the TTS voice's delivery, not to
+   be read as visible text. The agent includes them in the raw message
+   content regardless of mode, so strip them before rendering the
+   transcript bubble. Voice playback itself is unaffected — this only
+   touches what's displayed. */
+function stripVoiceDirectionTags(text) {
+  return text
+    .replace(/\[([A-Za-z][A-Za-z\s]{0,24})\]/g, (match, inner) => {
+      const compact = inner.replace(/\s/g, "");
+      const looksLikeAcronym = compact === compact.toUpperCase() && compact.length <= 6;
+      return looksLikeAcronym ? match : "";
+    })
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 /* ============ Mode tabs (only switchable when idle) ============ */
 function setMode(next) {
   if (sessionActive) return; // can't switch mid-session
@@ -153,6 +197,10 @@ tabText.addEventListener("click", () => setMode("text"));
 tabVoice.addEventListener("click", () => setMode("voice"));
 
 /* ============ Suggested prompt chips ============ */
+function setChipsDisabled(disabled) {
+  chipRow.querySelectorAll(".chip").forEach((c) => { c.disabled = disabled; });
+}
+
 chipRow.addEventListener("click", async (e) => {
   const chip = e.target.closest("button[data-prompt]");
   if (!chip) return;
@@ -160,7 +208,7 @@ chipRow.addEventListener("click", async (e) => {
 
   if (mode !== "text") setMode("text");
 
-  if (!sessionActive) {
+  if (!sessionActive && !connecting) {
     await startSession();
   }
   if (sessionActive) {
@@ -178,12 +226,39 @@ function resetThread() {
   systemRowEl = null;
   sharedAgentAvatarEl = null;
   sharedUserAvatarEl = null;
+  hideTypingIndicator();
   thread.innerHTML = "";
   thread.appendChild(threadEmpty);
   threadEmpty.hidden = false;
 }
 
+/* Full UI + state reset back to idle. Shared by onDisconnect, onError, and
+   endSession() as a safety net — idempotent, safe to call more than once
+   for the same session (e.g. if onError fires and onDisconnect also fires
+   right after it for the same drop). */
+function resetSessionState() {
+  sessionActive = false;
+  connecting = false;
+  awaitingReply = false;
+  hideTypingIndicator();
+  startBtn.hidden = false;
+  startBtn.disabled = false;
+  endBtn.hidden = true;
+  endBtn.disabled = false;
+  tabText.disabled = false;
+  tabVoice.disabled = false;
+  chatInput.disabled = true;
+  sendBtn.disabled = true;
+  chatInput.placeholder = "Start a session to begin typing…";
+  setChipsDisabled(false);
+  if (lastAgentAvatarEl) lastAgentAvatarEl.classList.remove("is-speaking");
+  conversation = null;
+}
+
 async function startSession() {
+  if (sessionActive || connecting) return;
+  connecting = true;
+  setChipsDisabled(true);
   clearError();
   resetThread();
   startBtn.disabled = true;
@@ -208,22 +283,14 @@ async function startSession() {
         appendSystemNote(mode === "text" ? "Text session started." : "Voice call connected — start talking.");
       },
       onDisconnect: () => {
-        sessionActive = false;
+        const hadActiveSession = sessionActive;
+        resetSessionState();
         setStatus("idle", "Idle");
-        startBtn.hidden = false;
-        startBtn.disabled = false;
-        endBtn.hidden = true;
-        tabText.disabled = false;
-        tabVoice.disabled = false;
-        chatInput.disabled = true;
-        sendBtn.disabled = true;
-        chatInput.placeholder = "Start a session to begin typing…";
-        if (lastAgentAvatarEl) lastAgentAvatarEl.classList.remove("is-speaking");
-        appendSystemNote("Session ended.");
+        if (hadActiveSession) appendSystemNote("Session ended.");
       },
       onMessage: (message) => {
         const role = message.role === "user" ? "user" : "agent";
-        const text = message.message ?? "";
+        let text = message.message ?? "";
         if (!text) return;
 
         if (role === "user") {
@@ -234,6 +301,15 @@ async function startSession() {
             recentSentTexts.splice(idx, 1);
             return;
           }
+        }
+        if (role === "agent") {
+          hideTypingIndicator();
+          awaitingReply = false;
+          if (mode === "text") {
+            sendBtn.disabled = false;
+          }
+          text = stripVoiceDirectionTags(text);
+          if (!text) return; // message was only a direction tag, nothing to display
         }
         appendMessage(role, text);
       },
@@ -247,8 +323,19 @@ async function startSession() {
         }
       },
       onError: (message) => {
-        showError(typeof message === "string" ? message : "Connection error. Please try again.");
+        // An unexpected drop (e.g. a WebSocket closing with no clean close
+        // frame) can fire onError without ever calling onDisconnect, so the
+        // UI must fully reset itself here too — not just show an error text
+        // — or Start/End and the mode tabs are left stuck mid-session.
+        const wasActiveVoiceCall = sessionActive && mode === "voice";
+        resetSessionState();
         setStatus("error", "Error");
+        if (wasActiveVoiceCall) {
+          showError("The voice connection was interrupted. Please try again, or switch to Text Chat.");
+          appendSystemNote("Voice call disconnected unexpectedly.");
+        } else {
+          showError(typeof message === "string" ? message : "Connection error. Please try again.");
+        }
       },
     };
 
@@ -269,8 +356,11 @@ async function startSession() {
     if (err && err.name === "NotAllowedError") {
       showError("Microphone access was denied. Allow microphone access to use Voice Call, or switch to Text Chat.");
     } else {
-      showError("Couldn't start the session: " + (err?.message || "unknown error"));
+      showError("Couldn't start the session. Please try again in a moment.");
     }
+  } finally {
+    connecting = false;
+    setChipsDisabled(false);
   }
 }
 
@@ -281,20 +371,26 @@ async function endSession() {
     await conversation.endSession();
   } catch (err) {
     console.error("Error ending session:", err);
-  } finally {
-    conversation = null;
-    endBtn.disabled = false;
+  }
+  // onDisconnect normally fires and calls resetSessionState() on its own;
+  // this is a safety net in case it doesn't, so the UI never gets stuck.
+  if (conversation) {
+    resetSessionState();
+    setStatus("idle", "Idle");
   }
 }
 
 /* ============ Text composer ============ */
 function sendText(text) {
-  if (!conversation || !sessionActive || !text.trim()) return;
-  const trimmed = text.trim();
+  if (!conversation || !sessionActive || !text.trim() || awaitingReply) return;
+  const trimmed = text.trim().slice(0, 500);
   recentSentTexts.push(trimmed);
   appendMessage("user", trimmed);
   try {
     conversation.sendUserMessage(trimmed);
+    awaitingReply = true;
+    sendBtn.disabled = true;
+    showTypingIndicator();
   } catch (err) {
     console.error("Failed to send message:", err);
     showError("Failed to send message. The connection may have dropped.");
@@ -312,6 +408,13 @@ chatInput.addEventListener("keydown", (e) => {
     const text = chatInput.value;
     chatInput.value = "";
     sendText(text);
+  }
+});
+
+/* ============ Clean up a dangling session on tab close/navigation ============ */
+window.addEventListener("beforeunload", () => {
+  if (conversation) {
+    try { conversation.endSession(); } catch (err) { /* best effort — page is unloading */ }
   }
 });
 
