@@ -82,6 +82,16 @@ createApp({
           stack:['Java Swing','Maven / NetBeans','MySQL (JDBC)'],
           role:'Desktop Application Developer',
           notes:'Login validates against a voters table and blocks users who have already voted. Profile screen re-themes its border, background, and header gradient based on the voter\'s gender.'
+        },
+        {
+          name:'ask_erich_ragbot',
+          title:'ASK.ERICH — AI Portfolio Assistant',
+          status:'Active',
+          link:'ask.erich.html',
+          desc:'A voice-and-text RAG (Retrieval-Augmented Generation) agent built with ElevenLabs Conversational AI, grounded in a fixed knowledge base of my projects, stack, and background.',
+          stack:['ElevenLabs Conversational AI','RAG / Knowledge Base','Voice Interaction'],
+          role:'AI Agent Developer',
+          notes:'Answers only from its knowledge base and explicitly declines out-of-scope questions instead of inventing an answer. Embedded directly into this portfolio.'
         }
       ],
       gamedev:[
@@ -106,6 +116,7 @@ createApp({
         {label:'Game Dev', items:['Unity (2D & 3D)','C#','URP','New Input System']},
         {label:'Mobile Dev', items:['Android (Java / Kotlin)','Jetpack Navigation Component']},
         {label:'Desktop Dev', items:['Java','Java Swing','Maven','NetBeans']},
+        {label:'AI / Conversational', items:['ElevenLabs Conversational AI','RAG / Knowledge Base Design']},
         {label:'Tooling', items:['XAMPP','VS Code','Git / GitHub','Node.js']},
         {label:'Deployment', items:['Firebase Hosting','Render','InfinityFree','Static / Shared Hosting']}
       ],
@@ -118,7 +129,8 @@ createApp({
         {ver:'v006', date:'Coursework', title:'dynweb_teacher_management', desc:'PHP teacher and user management app hosted on InfinityFree, with a dark blue UI theme. Resolved routing, database connection, and layout issues.'},
         {ver:'v007', date:'Coursework', title:'unity_2d_3d_prototypes', desc:'Built a 2D platformer (New Input System, SPUM, Android build) and a 3D third-person combat prototype (URP, Mixamo, Rigidbody physics) in Unity.'},
         {ver:'v008', date:'Built', title:'lokalkusinero_schema', desc:'Designed a nine-table MyISAM schema for a Filipino recipe and pantry app, with a validated canonical seed of thirty recipes.'},
-        {ver:'v009', date:'In Progress', title:'complaint_management_ai_assistant', desc:'Backend development on the primary capstone project, from Chapter 1 and Resource Matrix documentation through system implementation.', head:true}
+        {ver:'v009', date:'In Progress', title:'complaint_management_ai_assistant', desc:'Backend development on the primary capstone project, from Chapter 1 and Resource Matrix documentation through system implementation.'},
+        {ver:'v010', date:'Active', title:'ask_erich_ragbot', desc:'Built ASK.ERICH, an ElevenLabs Conversational AI agent grounded in a fixed knowledge base, embedded directly into this portfolio.', head:true}
       ]
     }
   },

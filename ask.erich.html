@@ -3,73 +3,111 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ASK.ERICH — Portfolio RAGbot</title>
+<title>Ask Erich — AI Portfolio Assistant</title>
+<meta name="description" content="ASK.ERICH — a voice-and-text RAG assistant trained on Erich Gagui's projects, stack, and background." />
+
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Ask Erich — AI Portfolio Assistant" />
+<meta property="og:description" content="A voice-and-text RAG assistant trained on Erich Gagui's projects, stack, and background." />
+<meta property="og:image" content="assets/portrait.png" />
+
+<!-- Preconnects and the Google Fonts stylesheet must come before any other
+     stylesheet reference, but note there is no @import rule here at all —
+     using <link> avoids the "@import must be first" pitfall entirely. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Shares the exact same stylesheet as the rest of the site, so nav,
+     colors, and type stay in sync automatically instead of duplicating them. -->
+<link rel="stylesheet" href="css/style.css">
+
 <style>
-  :root{
-    --black:#0a0a0a; --white:#ffffff; --line-soft:#e2e2e2;
-    --gray-600:#6f6f6f; --gray-100:#f2f2f0;
-    --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+  /* Page-specific rules only — everything shared lives in css/style.css */
+  .agent-hero{ padding:150px 0 60px; text-align:center; }
+  .agent-hero .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--gray-600); margin:0 0 18px; display:flex; align-items:center; gap:10px;
+    justify-content:center;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  body{
-    background:var(--white); color:var(--black); font-family:var(--body);
-    min-height:100vh; display:flex; flex-direction:column; align-items:center;
-    padding:60px 20px;
-  }
-  .tag{
-    font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase;
-    color:var(--gray-600); margin-bottom:14px; display:flex; align-items:center; gap:10px;
-  }
-  .tag::before{content:''; width:22px; height:1px; background:var(--gray-600);}
-  h1{
+  .agent-hero h1{
     font-family:var(--display); font-weight:700; font-size:clamp(32px,6vw,52px);
-    letter-spacing:-0.02em; margin-bottom:16px; text-align:center;
+    letter-spacing:-0.02em; margin:0 auto 16px; max-width:640px;
   }
-  p.sub{
-    font-size:16px; color:#444; max-width:520px; text-align:center; margin-bottom:40px; line-height:1.6;
+  .agent-hero p.sub{
+    font-size:16px; color:var(--gray-900); max-width:560px; margin:0 auto 40px; line-height:1.7;
   }
+
+  .chip-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:36px; }
+  .chip{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:0.02em;
+    border:1px solid var(--line-soft); padding:7px 12px; border-radius:999px; color:var(--gray-900);
+  }
+
   .widget-frame{
-    border:1px solid var(--black); border-radius:14px; padding:28px;
-    width:100%; max-width:480px; background:var(--gray-100);
+    border:1px solid var(--black); border-radius:14px; padding:32px 28px;
+    width:100%; max-width:480px; margin:0 auto; background:var(--gray-100);
     display:flex; flex-direction:column; align-items:center; gap:16px;
   }
   .widget-frame .label{
     font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
     color:var(--gray-600);
   }
-  footer{
-    margin-top:50px; font-family:var(--mono); font-size:11px; color:var(--gray-600); text-align:center;
+  .widget-fallback{
+    font-family:var(--mono); font-size:12px; color:var(--gray-600); text-align:center; max-width:340px;
   }
-  footer a{color:var(--black);}
+
+  .back-row{ margin-top:44px; text-align:center; }
+
+  @media (max-width:600px){
+    .agent-hero{ padding:130px 0 40px; }
+  }
 </style>
 </head>
 <body>
 
-  <div class="tag">ERICH.SYS — AI Assistant Module</div>
-  <h1>Ask about my portfolio</h1>
-  <p class="sub">
-    ASK.ERICH is a voice-and-text assistant trained on my projects,
-    stack, and background. Try asking about LokalKusinero, ElectBudz,
-    my capstone, or my tech stack — it answers from a fixed knowledge
-    base, so it'll also tell you honestly when something's outside it.
-  </p>
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="brand" style="text-decoration:none;"><span class="dot"></span>ERICH.SYS</a>
+      <a href="index.html" class="btn ghost" style="padding:9px 16px; font-size:11px;">&larr; Back to Portfolio</a>
+    </div>
+  </header>
 
-  <div class="widget-frame">
-    <span class="label">Talk to ASK.ERICH</span>
+  <main>
+    <section class="agent-hero wrap">
+      <div class="eyebrow">AI Assistant Module — Week 3</div>
+      <h1>Ask about my portfolio</h1>
+      <p class="sub">
+        ASK.ERICH is a voice-and-text assistant built with ElevenLabs and grounded
+        in a fixed knowledge base of my projects, stack, and background. It won't
+        invent an answer — if something's outside what it knows, it'll say so.
+      </p>
 
-    <!--
-      Replace YOUR_AGENT_ID_HERE below with the Agent ID from your
-      ElevenLabs dashboard (Agent → Settings → Agent ID), after you've
-      published the agent.
-    -->
-    <elevenlabs-convai agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"></elevenlabs-convai>
-  </div>
+      <div class="chip-row" aria-hidden="true">
+        <span class="chip">"What's your capstone project?"</span>
+        <span class="chip">"What stack does LokalKusinero use?"</span>
+        <span class="chip">"What is ElectBudz?"</span>
+      </div>
 
-  <footer>
-    Built by Erich Gagui · <a href="https://github.com/erich-gagui18" target="_blank" rel="noopener">github.com/erich-gagui18</a>
+      <div class="widget-frame">
+        <span class="label">Talk to ASK.ERICH</span>
+        <elevenlabs-convai agent-id="agent_0401m1mxxdw1evyvbw9dm22ynqp0"></elevenlabs-convai>
+        <noscript>
+          <p class="widget-fallback">This assistant needs JavaScript enabled to load.</p>
+        </noscript>
+      </div>
+    </section>
+
+    <div class="back-row wrap">
+      <a href="index.html" class="btn ghost">&larr; Back to Portfolio</a>
+    </div>
+  </main>
+
+  <footer class="wrap" style="margin-top:70px;">
+    <span>&copy; 2026 Erich Gagui. AI Assistant Module — IPT102 Week 3.</span>
+    <span>Built with ElevenLabs Conversational AI</span>
   </footer>
 
   <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
