@@ -1,6 +1,6 @@
 import { Conversation } from "https://esm.sh/@elevenlabs/client@1.22.0";
 
-const AGENT_ID = "agent_0401m1mxxdw1evyvbw9dm22ynqp0";
+const AGENT_ID = "agent_5001m1n9q8p2ed4rkpye5sgf91pr";
 
 /* ============ DOM refs ============ */
 const thread = document.getElementById("thread");
@@ -43,41 +43,99 @@ function clearError() {
   errorNote.textContent = "";
 }
 
-/* ============ Thread rendering ============ */
-function appendMessage(role, text) {
-  threadEmpty.hidden = true;
+/* ============ Thread rendering ============
+   Full conversation history is retained — nothing is overwritten. To keep
+   it streamlined:
+   - Only ONE avatar element per role ever exists. Since a DOM node moves
+     (rather than duplicates) when appended elsewhere, re-appending the
+     same avatar into a new group's row automatically detaches it from
+     wherever it was before — so there's never more than one agent avatar
+     or one user avatar on screen, no matter how many turns happen.
+   - Consecutive messages from the same speaker still group into one row,
+     each new message adding another bubble to that row's stack rather
+     than starting a fresh row. */
+let lastGroupRole = null;
+let lastGroupRow = null;
+let sharedAgentAvatarEl = null;
+let sharedUserAvatarEl = null;
+
+function getAvatar(role) {
+  if (role === "agent") {
+    if (!sharedAgentAvatarEl) {
+      sharedAgentAvatarEl = document.createElement("div");
+      sharedAgentAvatarEl.className = "msg-avatar";
+      sharedAgentAvatarEl.innerHTML = `<img src="assets/logos/AE_Logo.jpg" alt="" />`;
+      lastAgentAvatarEl = sharedAgentAvatarEl;
+    }
+    return sharedAgentAvatarEl;
+  }
+  if (!sharedUserAvatarEl) {
+    sharedUserAvatarEl = document.createElement("div");
+    sharedUserAvatarEl.className = "msg-avatar user-avatar";
+    sharedUserAvatarEl.textContent = "YOU";
+  }
+  return sharedUserAvatarEl;
+}
+
+function buildRow(role) {
   const row = document.createElement("div");
   row.className = `msg-row ${role}`;
 
-  const avatar = document.createElement("div");
-  if (role === "agent") {
-    avatar.className = "msg-avatar";
-    avatar.innerHTML = `<img src="assets/logos/AE_Logo.jpg" alt="" />`;
-    lastAgentAvatarEl = avatar;
-  } else if (role === "user") {
-    avatar.className = "msg-avatar user-avatar";
-    avatar.textContent = "YOU";
+  if (role !== "system") {
+    row.appendChild(getAvatar(role));
   }
 
-  const bubble = document.createElement("div");
-  bubble.className = "msg-bubble";
-  bubble.textContent = text;
+  const stack = document.createElement("div");
+  stack.className = "msg-bubble-stack";
+  row.appendChild(stack);
 
-  if (role !== "system") row.appendChild(avatar);
-  row.appendChild(bubble);
-  thread.appendChild(row);
+  return row;
+}
+
+function addBubble(row, text, role) {
+  const stack = row.querySelector(".msg-bubble-stack");
+  const bubble = document.createElement("div");
+  bubble.className = "msg-bubble msg-bubble-updated";
+
+  const textEl = document.createElement("span");
+  textEl.className = "msg-bubble-text";
+  textEl.textContent = text;
+  bubble.appendChild(textEl);
+
+  stack.appendChild(bubble);
+}
+
+function appendMessage(role, text) {
+  threadEmpty.hidden = true;
+
+  if (role === lastGroupRole && lastGroupRow) {
+    addBubble(lastGroupRow, text, role);
+  } else {
+    const row = buildRow(role);
+    addBubble(row, text, role);
+    thread.appendChild(row);
+    lastGroupRole = role;
+    lastGroupRow = row;
+  }
+
   thread.scrollTop = thread.scrollHeight;
 }
 
+/* System notes (session started/ended) are status text, not conversation
+   history, so they stay as a single row that updates in place. */
+let systemRowEl = null;
+
 function appendSystemNote(text) {
   threadEmpty.hidden = true;
-  const row = document.createElement("div");
-  row.className = "msg-row system";
-  const bubble = document.createElement("div");
-  bubble.className = "msg-bubble";
-  bubble.textContent = text;
-  row.appendChild(bubble);
-  thread.appendChild(row);
+
+  if (!systemRowEl) {
+    systemRowEl = buildRow("system");
+    thread.insertBefore(systemRowEl, thread.firstChild);
+  }
+  const stack = systemRowEl.querySelector(".msg-bubble-stack");
+  stack.innerHTML = "";
+  addBubble(systemRowEl, text, "system");
+
   thread.scrollTop = thread.scrollHeight;
 }
 
@@ -114,8 +172,20 @@ chipRow.addEventListener("click", async (e) => {
 startBtn.addEventListener("click", startSession);
 endBtn.addEventListener("click", endSession);
 
+function resetThread() {
+  lastGroupRole = null;
+  lastGroupRow = null;
+  systemRowEl = null;
+  sharedAgentAvatarEl = null;
+  sharedUserAvatarEl = null;
+  thread.innerHTML = "";
+  thread.appendChild(threadEmpty);
+  threadEmpty.hidden = false;
+}
+
 async function startSession() {
   clearError();
+  resetThread();
   startBtn.disabled = true;
   setStatus("connecting", "Connecting…");
 

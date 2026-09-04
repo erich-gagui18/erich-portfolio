@@ -30,6 +30,15 @@ createApp({
           team: 'John Mark Florence C. Tercero — UI/UX & QA · Lauren Sidney M. Lina — Documentation'
         },
         {
+          name:'week2_firebase_auth_crud',
+          title:'Week 2 Activity — Firebase Authentication & Database CRUD',
+          status:'Active',
+          desc:'Coursework activity: a Firebase-backed app where authenticated users manage their own student records, with Email/Password auth gating a full Create/Read/Update/Delete interface against Cloud Firestore.',
+          stack:['Firebase Authentication','Cloud Firestore','Vanilla JavaScript (ES Modules)'],
+          role:'Full-stack Developer',
+          notes:'Read is a live onSnapshot query filtered by ownerId, so each user only ever sees their own records — enforced client-side by the query and server-side by matching Firestore security rules. Delete requires a confirmation modal.'
+        },
+        {
           name:'lokalkusinero',
           title:'LokalKusinero',
           status:'Active',
@@ -130,7 +139,8 @@ createApp({
         {ver:'v007', date:'Coursework', title:'unity_2d_3d_prototypes', desc:'Built a 2D platformer (New Input System, SPUM, Android build) and a 3D third-person combat prototype (URP, Mixamo, Rigidbody physics) in Unity.'},
         {ver:'v008', date:'Built', title:'lokalkusinero_schema', desc:'Designed a nine-table MyISAM schema for a Filipino recipe and pantry app, with a validated canonical seed of thirty recipes.'},
         {ver:'v009', date:'In Progress', title:'complaint_management_ai_assistant', desc:'Backend development on the primary capstone project, from Chapter 1 and Resource Matrix documentation through system implementation.'},
-        {ver:'v010', date:'Active', title:'ask_erich_ragbot', desc:'Built ASK.ERICH, an ElevenLabs Conversational AI agent grounded in a fixed knowledge base, embedded directly into this portfolio.', head:true}
+        {ver:'v010', date:'Active', title:'ask_erich_ragbot', desc:'Built ASK.ERICH, an ElevenLabs Conversational AI agent grounded in a fixed knowledge base, embedded directly into this portfolio.'},
+        {ver:'v011', date:'Active', title:'week2_firebase_auth_crud', desc:'Coursework activity building a Firebase Authentication + Firestore CRUD app — per-user student records behind a live onSnapshot query and matching ownerId-scoped security rules.', head:true}
       ]
     }
   },

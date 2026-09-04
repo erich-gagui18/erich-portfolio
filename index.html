@@ -52,7 +52,7 @@
         <a href="#stack" @click="menuOpen=false">Stack</a>
         <a href="#cv" @click="menuOpen=false">CV</a>
         <a href="#log" @click="menuOpen=false">Log</a>
-        <a href="ask.erich.html">Ask AI</a>
+        <a href="#askerich" @click="menuOpen=false">ASK.ERICH</a>
         <a href="#contact" @click="menuOpen=false">Contact</a>
       </nav>
       <button class="nav-toggle" @click="menuOpen = !menuOpen" aria-label="Toggle menu" aria-controls="primary-nav" :aria-expanded="menuOpen">{{ menuOpen ? '×' : '≡' }}</button>
@@ -241,11 +241,46 @@
     </div>
   </section>
 
+  <section class="section" id="askerich">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="section-tag">05 / Live Agent</div>
+          <h2 class="section-title">ASK.ERICH</h2>
+        </div>
+      </div>
+      <div class="describe-table reveal">
+        <div class="describe-row">
+          <div class="field">What it is</div>
+          <div class="value">A voice-and-text RAG (Retrieval-Augmented Generation) agent built with ElevenLabs Conversational AI, embedded directly into this portfolio at <code>ask.erich.html</code>.</div>
+        </div>
+        <div class="describe-row">
+          <div class="field">Grounding</div>
+          <div class="value">Answers only from a fixed knowledge base covering my projects, stack, and background — it explicitly declines out-of-scope questions instead of inventing an answer.</div>
+        </div>
+        <div class="describe-row">
+          <div class="field">Modes</div>
+          <div class="value">
+            <span class="tag-chip">Text Chat</span>
+            <span class="tag-chip">Voice Conversation</span>
+            <span class="tag-chip">ElevenLabs Conversational AI</span>
+          </div>
+        </div>
+      </div>
+      <div class="cv-panel reveal">
+        <div class="cv-copy">
+          <p>Ask it about any project on this page, my stack, or how I approach a problem — in text or by voice.</p>
+        </div>
+        <a href="ask.erich.html" class="btn cv-download">Launch ASK.ERICH ↗</a>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="cv">
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="section-tag">05 / Export</div>
+          <div class="section-tag">06 / Export</div>
           <h2 class="section-title">Curriculum Vitae</h2>
         </div>
       </div>
@@ -262,7 +297,7 @@
     <div class="wrap">
       <div class="section-head">
         <div>
-          <div class="section-tag">06 / History</div>
+          <div class="section-tag">07 / History</div>
           <h2 class="section-title">Migration Log</h2>
         </div>
       </div>
