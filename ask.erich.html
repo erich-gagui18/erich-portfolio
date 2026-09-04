@@ -36,6 +36,34 @@
     margin:0 auto 36px; line-height:1.7;
   }
 
+  /* ===== Agent logo mark ===== */
+  .agent-logo{
+    width:172px; height:172px; margin:0 auto 28px; position:relative;
+  }
+  .agent-logo-frame{
+    width:100%; height:100%; border-radius:50%; overflow:hidden;
+    border:1px solid var(--black); background:var(--white);
+    display:flex; align-items:center; justify-content:center; padding:34px;
+  }
+  .agent-logo::before{
+    content:''; position:absolute; inset:-7px; border:1px solid var(--line-soft);
+    border-radius:50%; pointer-events:none;
+  }
+  .agent-logo .bracket{ position:absolute; width:18px; height:18px; border:0 solid var(--black); }
+  .agent-logo .bracket.tl{ top:-9px; left:-9px; border-top-width:2px; border-left-width:2px; }
+  .agent-logo .bracket.tr{ top:-9px; right:-9px; border-top-width:2px; border-right-width:2px; }
+  .agent-logo .bracket.bl{ bottom:-9px; left:-9px; border-bottom-width:2px; border-left-width:2px; }
+  .agent-logo .bracket.br{ bottom:-9px; right:-9px; border-bottom-width:2px; border-right-width:2px; }
+  .agent-logo img{
+    width:100%; height:100%; object-fit:contain;
+    filter:grayscale(100%) contrast(1.1); transition:filter .4s ease, transform .4s ease;
+  }
+  .agent-logo:hover .agent-logo-frame img{ filter:grayscale(0%) contrast(1); transform:scale(1.06); }
+  .agent-logo-tag{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--gray-600); text-align:center; margin:0 0 20px;
+  }
+
   .chip-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:40px; }
   .chip{
     font-family:var(--mono); font-size:11.5px; letter-spacing:0.02em;
@@ -246,6 +274,16 @@
     <section class="agent-hero wrap">
       <div class="eyebrow">AI Assistant Module — Week 3</div>
       <h1>Ask about my portfolio</h1>
+
+      <div class="agent-logo">
+        <span class="bracket tl"></span><span class="bracket tr"></span>
+        <span class="bracket bl"></span><span class="bracket br"></span>
+        <div class="agent-logo-frame">
+          <img src="assets/logos/AE_Logo.jpg" alt="AE — Ask Erich logo mark" />
+        </div>
+      </div>
+      <p class="agent-logo-tag">Ask.Erich — Agent Mark</p>
+
       <p class="sub">
         ASK.ERICH is a custom-built chat interface on top of ElevenLabs Conversational AI,
         grounded in a fixed knowledge base of my projects, stack, and background. It won't
