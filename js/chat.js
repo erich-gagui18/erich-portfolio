@@ -51,7 +51,7 @@ function appendMessage(role, text) {
   const avatar = document.createElement("div");
   if (role === "agent") {
     avatar.className = "msg-avatar";
-    avatar.innerHTML = `<img src="assets/portrait.png" alt="" />`;
+    avatar.innerHTML = `<img src="assets/logos/AE_Logo.jpg" alt="" />`;
   } else if (role === "user") {
     avatar.className = "msg-avatar user-avatar";
     avatar.textContent = "YOU";
