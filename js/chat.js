@@ -1,6 +1,6 @@
 import { Conversation } from "https://esm.sh/@elevenlabs/client@1.22.0";
 
-const AGENT_ID = "agent_5001m1n9q8p2ed4rkpye5sgf91pr";
+const AGENT_ID = "agent_7401m1ntsf1hfmea27hnk0cvqt6n";
 
 /* ============ DOM refs ============ */
 const thread = document.getElementById("thread");
