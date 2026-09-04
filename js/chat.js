@@ -26,6 +26,7 @@ let mode = "text"; // 'text' | 'voice'
 let conversation = null;
 let sessionActive = false;
 let recentSentTexts = []; // de-dupe: texts we already rendered locally
+let lastAgentAvatarEl = null; // the most recent agent avatar — animated while speaking (voice mode)
 
 /* ============ Status helpers ============ */
 function setStatus(state, label) {
@@ -52,6 +53,7 @@ function appendMessage(role, text) {
   if (role === "agent") {
     avatar.className = "msg-avatar";
     avatar.innerHTML = `<img src="assets/logos/AE_Logo.jpg" alt="" />`;
+    lastAgentAvatarEl = avatar;
   } else if (role === "user") {
     avatar.className = "msg-avatar user-avatar";
     avatar.textContent = "YOU";
@@ -83,9 +85,10 @@ function appendSystemNote(text) {
 function setMode(next) {
   if (sessionActive) return; // can't switch mid-session
   mode = next;
+  thread.dataset.mode = mode;
   tabText.setAttribute("aria-selected", String(mode === "text"));
   tabVoice.setAttribute("aria-selected", String(mode === "voice"));
-  startBtn.textContent = mode === "text" ? "Start Text Session" : "Start Voice Call";
+  startBtn.textContent = mode === "text" ? "Start Text Session" : "Start Voice Chat";
   textComposer.style.display = mode === "text" ? "block" : "none";
 }
 tabText.addEventListener("click", () => setMode("text"));
@@ -145,6 +148,7 @@ async function startSession() {
         chatInput.disabled = true;
         sendBtn.disabled = true;
         chatInput.placeholder = "Start a session to begin typing…";
+        if (lastAgentAvatarEl) lastAgentAvatarEl.classList.remove("is-speaking");
         appendSystemNote("Session ended.");
       },
       onMessage: (message) => {
@@ -164,8 +168,13 @@ async function startSession() {
         appendMessage(role, text);
       },
       onModeChange: ({ mode: convoMode }) => {
-        if (convoMode === "speaking") setStatus("speaking", "Speaking");
-        else if (convoMode === "listening") setStatus("listening", "Listening");
+        if (convoMode === "speaking") {
+          setStatus("speaking", "Speaking");
+          if (lastAgentAvatarEl) lastAgentAvatarEl.classList.add("is-speaking");
+        } else if (convoMode === "listening") {
+          setStatus("listening", "Listening");
+          if (lastAgentAvatarEl) lastAgentAvatarEl.classList.remove("is-speaking");
+        }
       },
       onError: (message) => {
         showError(typeof message === "string" ? message : "Connection error. Please try again.");
